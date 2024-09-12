@@ -10,7 +10,7 @@
   - Get the currently active channel. Channel 1 is default
   - Set channel to desired number c. Handle exception if c is out of range
 
-## TVController (maybe split up into two different classes)
+## TVRemote
 - This will be a TCP client
 - With buttons:
   - Can turn TV on and off
@@ -18,3 +18,10 @@
   - Can switch one channel down
 - With a display:
   - Show current channel of which the TV is connected to
+
+## TVRemoteHandler
+- This handles the TCP connection between TVRemote and SmartTV
+
+## Command
+- Abstract class for all commands sent to the socket
+- Also created a VersionCommand which extends Command and is a command for user to see version

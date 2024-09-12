@@ -1,3 +1,7 @@
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+
 /**
  * A TCP server.
  * <p>Turned off by default, and can <b>ONLY</b> be turned on when off.</p>
@@ -7,7 +11,59 @@
  *
  */
 public class SmartTV {
+  public static final int TCP_PORT = 1238; // in future maybe user should be able to choose between different TVs and therefore choose different TCP ports??
+  private boolean running;
+  private ServerSocket serverSocket;
+
   public static void main(String[] args) {
-    System.out.println("Hello, World!");
+    SmartTV tv = new SmartTV();
+    tv.run();
+  }
+
+  /**
+   * Run loop for SmartTV
+   */
+  private void run() {
+    if (openListeningSocket()) {
+      this.running = true;
+      while (this.running) {
+        Socket client = acceptNextClient();
+        TVRemoteHandler controllerHandler = new TVRemoteHandler(this, client);
+        controllerHandler.run();
+      }
+    }
+    System.out.println("TV turning off...");
+  }
+
+  /**
+   * Open a listening TCP socket.
+   *
+   * @return {@code true} on success, {@code false} on error.
+   */
+  private boolean openListeningSocket() {
+    boolean success = false;
+    try {
+      this.serverSocket = new ServerSocket(this.TCP_PORT);
+      success = true;
+    } catch (IOException e) {
+      System.err.println("Could not open a listening socket on port " + TCP_PORT
+          + ", reason: " + e.getMessage());
+    }
+    return success;
+  }
+
+  /**
+   * Accepts the next client and returns the socket.
+   *
+   * @return the socket of the client.
+   */
+  private Socket acceptNextClient() {
+    Socket clientSocket = null;
+    try {
+      clientSocket = this.serverSocket.accept();
+    } catch (IOException e) {
+      System.err.println("Could not accept the next client: " + e.getMessage());
+    }
+    return clientSocket;
   }
 }
