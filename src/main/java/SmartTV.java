@@ -94,6 +94,6 @@ public class SmartTV {
    */
   public void setOff() {
     this.on = false;
-    this.running = false; // turn off the TV completely? TODO: check if this is the desired behavior
+    //this.running = false; // turn off the TV completely? TODO: check if this is the desired behavior
   }
 }

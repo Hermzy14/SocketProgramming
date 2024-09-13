@@ -22,6 +22,40 @@
 ## TVRemoteHandler
 - This handles the TCP connection between TVRemote and SmartTV
 
+## TVRemoteUi
+- This will be a console UI for TVRemote
+- User can "press buttons" (write inputs) to interact with TVRemote
+
 ## Command
 - Abstract class for all commands sent to the socket
-- Also created a VersionCommand which extends Command and is a command for user to see version
+
+### TurnOnCommand
+- Command to turn on the TV
+- It extends Command
+- It can *ONLY* be sent when the TV is off
+
+### TurnOffCommand
+- Command to turn off the TV
+- It extends Command
+- It can *ONLY* be sent when the TV is on
+
+### SwitchChannelCommand
+- Command to switch channel
+- It extends Command
+- It can be sent when the TV is on
+- It can be sent with a parameter to switch to a specific channel
+
+### GetChannelCommand
+- Command to get the current channel
+- It extends Command
+- It can be sent when the TV is on
+
+### GetAvailableChannelsCommand
+- Command to get the number of available channels
+- It extends Command
+- It can be sent when the TV is on
+
+### VersionCommand
+- Command to get the version of the TV
+- It extends Command
+- It can be sent when the TV is on

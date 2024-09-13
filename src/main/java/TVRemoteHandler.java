@@ -20,7 +20,7 @@ public class TVRemoteHandler {
     this.tv = tv;
     this.clientRemote = clientRemote;
     System.out.println("Remote connected from " + clientRemote.getRemoteSocketAddress()
-      + ", port: " + clientRemote.getPort());
+        + ", port: " + clientRemote.getPort());
   }
 
   /**
@@ -49,7 +49,9 @@ public class TVRemoteHandler {
   }
 
   /**
-   * Handle one command from the client.
+   * Handle one command from the client. If the command is unknown, it returns an error message.
+   * If the TV is turned on, it will accept all commands. If the TV is turned off, it will only
+   * accept the on command.
    *
    * @param command a command sent by the client.
    * @return {@code true} when the command is handled, {@code false} when an error
@@ -60,18 +62,16 @@ public class TVRemoteHandler {
     System.out.println("Command from the client: " + command);
     String response = null;
 
-    if (command == null) { // TODO - gjøre om til switch-case??
+    if (command == null) {
       shouldContinue = false;
     } else {
-      if (command instanceof VersionCommand) {
-        response = getVersionResponse();
-      } else if (command instanceof OnCommand) {
-        response = getOnResponse();
-      } else if (command instanceof OffCommand) {
-        response = getOffResponse();
-      } else { // TODO - implementer alle funksjoner
-        response = "Unknown command";
-      }
+      response = switch (command) {
+        case OnCommand onCommand when !this.tv.isOn() -> getOnResponse();
+        case OffCommand offCommand when this.tv.isOn() -> getOffResponse();
+        case VersionCommand versionCommand when this.tv.isOn() -> getVersionResponse();
+        // TODO - implementer alle funksjoner
+        default -> handleUnknownCommand(command);
+      };
     }
 
     if (response != null) {
@@ -118,6 +118,27 @@ public class TVRemoteHandler {
    */
   private String getVersionResponse() {
     return "SmartTV_Version_0.1";
+  }
+
+  /**
+   * If an unknown command is received, this method is called.
+   *
+   * @return a message to the client that the command is unknown with some more information on what
+   * could be wrong.
+   */
+  private String handleUnknownCommand(Command command) {
+    String response;
+
+    switch (command) {
+      case OnCommand onCommand when this.tv.isOn() -> response = "TV is already on.";
+      case OffCommand offCommand when !this.tv.isOn() ->
+          response = "TV is off, write 'on' to turn on.";
+      case VersionCommand versionCommand when !this.tv.isOn() ->
+          response = "TV is off, write 'on' to turn on.";
+      default -> response = "Unknown command: " + command;
+    }
+
+    return response;
   }
 
   /**

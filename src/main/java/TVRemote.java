@@ -17,8 +17,8 @@ import java.net.Socket;
  * connected to.</p>
  */
 public class TVRemote {
-
-  private static final String SERVER_HOST = "localhost";  // usikker på hva denne egt skal være så har den bare som localhost enn så lenge
+  private static final String SERVER_HOST = "localhost";
+      // usikker på hva denne egt skal være så har den bare som localhost enn så lenge
   private Socket socket;
   private BufferedReader reader;
   private PrintWriter writer;
@@ -40,9 +40,8 @@ public class TVRemote {
    */
   private void run() {
     if (connect()) {
-      sendAndReceive(new OnCommand());
-      sendAndReceive(new VersionCommand());
-      sendAndReceive(new OffCommand());
+      TVRemoteUi ui = new TVRemoteUi(this);
+      ui.run();
     }
     System.out.println("Exiting...");
   }
@@ -72,7 +71,7 @@ public class TVRemote {
    *
    * @param command command received.
    */
-  private void sendAndReceive(Command command) {
+  public void sendAndReceive(Command command) {
     if (sendToTv(command)) {
       String response = receiveOneLineFromTv();
       if (response != null) {
