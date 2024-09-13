@@ -1,4 +1,6 @@
 import command.Command;
+import command.OffCommand;
+import command.OnCommand;
 import command.VersionCommand;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,11 +35,14 @@ public class TVRemote {
   }
 
   /**
-   * Runs the tv remote.
+   * Runs the tv remote. User can turn TV on and off, and switch one channel up and down through
+   * a command-line based UI.
    */
   private void run() {
     if (connect()) {
+      sendAndReceive(new OnCommand());
       sendAndReceive(new VersionCommand());
+      sendAndReceive(new OffCommand());
     }
     System.out.println("Exiting...");
   }

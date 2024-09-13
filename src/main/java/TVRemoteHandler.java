@@ -1,4 +1,6 @@
 import command.Command;
+import command.OffCommand;
+import command.OnCommand;
 import command.VersionCommand;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -63,6 +65,10 @@ public class TVRemoteHandler {
     } else {
       if (command instanceof VersionCommand) {
         response = getVersionResponse();
+      } else if (command instanceof OnCommand) {
+        response = getOnResponse();
+      } else if (command instanceof OffCommand) {
+        response = getOffResponse();
       } else { // TODO - implementer alle funksjoner
         response = "Unknown command";
       }
@@ -73,6 +79,36 @@ public class TVRemoteHandler {
     }
 
     return shouldContinue;
+  }
+
+  /**
+   * Turns the TV on if it is off. If it is already on, it returns a message saying so.
+   *
+   * @return the response of whether it is turning on or already is on to the client.
+   */
+  private String getOnResponse() {
+    String response = "";
+    if (this.tv.isOn()) {
+      response = "TV is already on.";
+    } else if (!this.tv.isOn()) {
+      response = "TV is turning on!";
+      this.tv.setOn();
+    }
+    return response;
+  }
+
+  /**
+   * Turns the TV off if it is on.
+   *
+   * @return a message to the client that the TV is turning off.
+   */
+  private String getOffResponse() {
+    String response = "";
+    if (this.tv.isOn()) {
+      response = "TV is turning off!";
+      this.tv.setOff();
+    }
+    return response;
   }
 
   /**

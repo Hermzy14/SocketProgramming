@@ -13,15 +13,21 @@ import java.net.Socket;
 public class SmartTV {
   public static final int TCP_PORT = 1238; // in future maybe user should be able to choose between different TVs and therefore choose different TCP ports??
   private boolean running;
+  private boolean on;
   private ServerSocket serverSocket;
 
+  /**
+   * Main method for SmartTV. Starts the TV when called by TVRemote.
+   *
+   * @param args Command line arguments.
+   */
   public static void main(String[] args) {
     SmartTV tv = new SmartTV();
     tv.run();
   }
 
   /**
-   * Run loop for SmartTV
+   * Run loop for SmartTV.
    */
   private void run() {
     if (openListeningSocket()) {
@@ -65,5 +71,29 @@ public class SmartTV {
       System.err.println("Could not accept the next client: " + e.getMessage());
     }
     return clientSocket;
+  }
+
+  /**
+   * Returns whether TV is on or not.
+   *
+   * @return {@code true} if TV is on, {@code false} if TV is off.
+   */
+  public boolean isOn() {
+    return this.on;
+  }
+
+  /**
+   * Turns on the TV.
+   */
+  public void setOn() {
+    this.on = true;
+  }
+
+  /**
+   * Turns off the TV.
+   */
+  public void setOff() {
+    this.on = false;
+    this.running = false; // turn off the TV completely? TODO: check if this is the desired behavior
   }
 }
