@@ -39,19 +39,29 @@
 - It extends Command
 - It can *ONLY* be sent when the TV is on
 
-### SwitchChannelCommand
+### SetChannelCommand
 - Command to switch channel
 - It extends Command
 - It can be sent when the TV is on
 - It can be sent with a parameter to switch to a specific channel
 
-### GetChannelCommand
+### GetCurrentChannelCommand
 - Command to get the current channel
 - It extends Command
 - It can be sent when the TV is on
 
-### GetAvailableChannelsCommand
+### GetChannelsCommand
 - Command to get the number of available channels
+- It extends Command
+- It can be sent when the TV is on
+
+### ChannelUpCommand
+- Command to switch channel up
+- It extends Command
+- It can be sent when the TV is on
+
+### ChannelDownCommand
+- Command to switch channel down
 - It extends Command
 - It can be sent when the TV is on
 

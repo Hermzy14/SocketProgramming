@@ -1,5 +1,10 @@
+import command.ChannelDownCommand;
+import command.ChannelUpCommand;
+import command.GetChannelsCommand;
+import command.GetCurrentChannelCommand;
 import command.OffCommand;
 import command.OnCommand;
+import command.SetChannelCommand;
 import command.VersionCommand;
 import java.util.Scanner;
 
@@ -25,12 +30,13 @@ public class TVRemoteUi {
    */
   public void run() {
     System.out.println("Welcome to the TV remote!");
-    System.out.println("Commands: on, off, version, channelup, channeldown, exit");
+    System.out.println(
+        "Commands: on, off, version, getchannels, channelup, channeldown, getcurrentchannel, setchannel, exit");
     boolean running = true;
     Scanner scanner = new Scanner(System.in);
     while (running) {
       System.out.print("Enter command: ");
-      String command = scanner.nextLine();
+      String command = scanner.nextLine().toLowerCase();
       switch (command) {
         case "on":
           this.remote.sendAndReceive(new OnCommand());
@@ -41,12 +47,24 @@ public class TVRemoteUi {
         case "version":
           this.remote.sendAndReceive(new VersionCommand());
           break;
-//            case "channelup":
-//            this.remote.sendAndReceive(new ChannelUpCommand());
-//            break;
-//            case "channeldown":
-//            this.remote.sendAndReceive(new ChannelDownCommand());
-//            break;
+        case "getchannels":
+          this.remote.sendAndReceive(new GetChannelsCommand());
+          break;
+        case "getcurrentchannel":
+          this.remote.sendAndReceive(new GetCurrentChannelCommand());
+          break;
+        case "channelup":
+          this.remote.sendAndReceive(new ChannelUpCommand());
+          break;
+        case "channeldown":
+          this.remote.sendAndReceive(new ChannelDownCommand());
+          break;
+        case "setchannel":
+          Scanner channelScanner = new Scanner(System.in);
+          System.out.print("Enter channel number: ");
+          int channel = channelScanner.nextInt();
+          this.remote.sendAndReceive(new SetChannelCommand(channel));
+          break;
         case "exit":
           running = false;
           break;
@@ -54,6 +72,5 @@ public class TVRemoteUi {
           System.out.println("Unknown command: " + command);
       }
     }
-    System.out.println("Exiting...");
   }
 }

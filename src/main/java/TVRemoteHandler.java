@@ -1,11 +1,18 @@
+import command.ChannelDownCommand;
+import command.ChannelUpCommand;
 import command.Command;
+import command.GetChannelsCommand;
+import command.GetCurrentChannelCommand;
 import command.OffCommand;
 import command.OnCommand;
+import command.SetChannelCommand;
 import command.VersionCommand;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Handles one SmartTV-TCP client connection.
@@ -69,7 +76,13 @@ public class TVRemoteHandler {
         case OnCommand onCommand when !this.tv.isOn() -> getOnResponse();
         case OffCommand offCommand when this.tv.isOn() -> getOffResponse();
         case VersionCommand versionCommand when this.tv.isOn() -> getVersionResponse();
-        // TODO - implementer alle funksjoner
+        case GetChannelsCommand getChannelsCommand when this.tv.isOn() -> getGetChannelsResponse();
+        case ChannelUpCommand channelUpCommand when this.tv.isOn() -> getChannelUpResponse();
+        case ChannelDownCommand channelDownCommand when this.tv.isOn() -> getChannelDownResponse();
+        case GetCurrentChannelCommand getCurrentChannelCommand when this.tv.isOn() ->
+            getGetCurrentChannelResponse();
+        case SetChannelCommand setChannelCommand when this.tv.isOn() ->
+            getSetChannelResponse(setChannelCommand.getChannel());
         default -> handleUnknownCommand(command);
       };
     }
@@ -121,6 +134,85 @@ public class TVRemoteHandler {
   }
 
   /**
+   * Handles the get channels command.
+   *
+   * @return the available channels
+   */
+  private String getGetChannelsResponse() {
+    String response = "Available channels: ";
+    ArrayList<Integer> channels = this.tv.getAvailableChannels();
+    Iterator<Integer> iterator = channels.iterator();
+
+    while (iterator.hasNext()) {
+      response += iterator.next();
+      if (iterator.hasNext()) {
+        response += ", ";
+      }
+    }
+
+    return response;
+  }
+
+  /**
+   * Handles the channel up command.
+   *
+   * @return the response of channel up.
+   */
+  private String getChannelUpResponse() {
+    String response = "";
+    try {
+      this.tv.channelUp();
+      response = "Channel up! Channel is now: " + this.tv.getCurrentChannel();
+    } catch (IllegalArgumentException e) {
+      response = "Error while channel up: " + e.getMessage();
+    }
+    return response;
+  }
+
+  /**
+   * Handles the channel down command.
+   *
+   * @return the response of channel down.
+   */
+  private String getChannelDownResponse() {
+    String response = "";
+    try {
+      this.tv.channelDown();
+      response = "Channel down! Channel is now: " + this.tv.getCurrentChannel();
+    } catch (IllegalArgumentException e) {
+      response = "Error while channel down: " + e.getMessage();
+    }
+    return response;
+  }
+
+  /**
+   * Handles the get current channel command.
+   *
+   * @return the current channel
+   */
+  private String getGetCurrentChannelResponse() {
+    return "Current channel: " + this.tv.getCurrentChannel();
+  }
+
+  /**
+   * Handles the set channel command.
+   *
+   * @return the response of setting the channel.
+   */
+  private String getSetChannelResponse(int channel) {
+    String response = "";
+
+    try {
+      this.tv.setCurrentChannel(channel);
+      response = "Channel set to " + channel;
+    } catch (IllegalArgumentException e) {
+      response = "Error while setting channel: " + e.getMessage();
+    }
+
+    return response;
+  }
+
+  /**
    * If an unknown command is received, this method is called.
    *
    * @return a message to the client that the command is unknown with some more information on what
@@ -134,6 +226,16 @@ public class TVRemoteHandler {
       case OffCommand offCommand when !this.tv.isOn() ->
           response = "TV is off, write 'on' to turn on.";
       case VersionCommand versionCommand when !this.tv.isOn() ->
+          response = "TV is off, write 'on' to turn on.";
+      case GetChannelsCommand getChannelsCommand when !this.tv.isOn() ->
+          response = "TV is off, write 'on' to turn on.";
+      case GetCurrentChannelCommand getCurrentChannelCommand when !this.tv.isOn() ->
+          response = "TV is off, write 'on' to turn on.";
+      case SetChannelCommand setChannelCommand when !this.tv.isOn() ->
+          response = "TV is off, write 'on' to turn on.";
+      case ChannelUpCommand channelUpCommand when !this.tv.isOn() ->
+          response = "TV is off, write 'on' to turn on.";
+      case ChannelDownCommand channelDownCommand when !this.tv.isOn() ->
           response = "TV is off, write 'on' to turn on.";
       default -> response = "Unknown command: " + command;
     }
