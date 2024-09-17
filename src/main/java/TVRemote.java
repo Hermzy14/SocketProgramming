@@ -1,7 +1,4 @@
 import command.Command;
-import command.OffCommand;
-import command.OnCommand;
-import command.VersionCommand;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

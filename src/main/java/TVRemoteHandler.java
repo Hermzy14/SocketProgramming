@@ -92,7 +92,7 @@ public class TVRemoteHandler {
       response = "TV is already on.";
     } else if (!this.tv.isOn()) {
       response = "TV is turning on!";
-      this.tv.setOn();
+      this.tv.turnOn();
     }
     return response;
   }
@@ -106,7 +106,7 @@ public class TVRemoteHandler {
     String response = "";
     if (this.tv.isOn()) {
       response = "TV is turning off!";
-      this.tv.setOff();
+      this.tv.turnOff();
     }
     return response;
   }

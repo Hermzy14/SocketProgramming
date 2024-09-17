@@ -85,14 +85,14 @@ public class SmartTV {
   /**
    * Turns on the TV.
    */
-  public void setOn() {
+  public void turnOn() {
     this.on = true;
   }
 
   /**
    * Turns off the TV.
    */
-  public void setOff() {
+  public void turnOff() {
     this.on = false;
     //this.running = false; // turn off the TV completely? TODO: check if this is the desired behavior
   }
